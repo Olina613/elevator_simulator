@@ -1,5 +1,9 @@
 import socket
 from elevator import Elevator
+import threading
+
+elevator1 = Elevator("1")
+elevator2 = Elevator("2")
 
 # 1. 建立一個 socket 物件
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -21,10 +25,27 @@ try:
             if not data:
                 print(f"Client {client_address} disconnected.")
                 break
-            print(f"Client {client_address} says: {data.decode()}")
+            command = data.decode()
+            print(f"Client {client_address} says: {command}")
+
+            parts = command.split()
+            if len(parts) != 2:
+                print("Invalid command format. Use: <elevator> <floor>")
+                continue
+            which_elevator = parts[0]
+            target_floor = int(parts[1])
+
+            if which_elevator == "1":
+                t = threading.Thread(target=elevator1.move, args=(target_floor,))
+                t.start()
+            elif which_elevator == "2":
+                t = threading.Thread(target=elevator2.move, args=(target_floor,))
+                t.start()
+            else:
+                print("Unknown elevator. Use 1 or 2.")
 
         client_connection.close()
 except KeyboardInterrupt:
     print("\nServer shutting down...")
 finally:
-    server_socket.close()      # ← 不管怎麼結束,都確保把 socket 關乾淨
+    server_socket.close() 
