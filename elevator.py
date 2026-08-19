@@ -9,52 +9,40 @@ class Elevator:
     def display_floor(self):
         print(f"Elevator {self.name} is currently on floor {self.current_floor}.")
 
-    def move(self, current_floor, target_floor):
+    def move(self, current_floor, target_floor, delay=1):
         self.current_floor = current_floor
         self.display_floor()
         if current_floor < target_floor:
             for i in range(current_floor + 1, target_floor + 1):
                 self.current_floor = i
                 self.display_floor() 
-                time.sleep(1)  
+                time.sleep(delay)  
         else:
             for i in range(current_floor - 1, target_floor - 1, -1):
                 self.current_floor = i
                 self.display_floor() 
-                time.sleep(1)  
-
-elevator1 = Elevator("1")
-elevator2 = Elevator("2")
+                time.sleep(delay)  
 
 
+if __name__ == "__main__":
+    elevator1 = Elevator("1")
+    elevator2 = Elevator("2")
 
-# which_elevator = input("Which elevator do you want to use? (1 or 2): ")
-# current = int(input("Current floor: "))
-# target = int(input("Target floor: "))
+    while True:
+        which = input("Which elevator? (1 or 2, or 'q' to quit): ")
 
-# if which_elevator == "1":
-#     elevator1.move(current, target)
-# else:
-#     elevator2.move(current, target)
+        if which == "q":
+            print("Goodbye!")
+            break
 
-elevator1 = Elevator("1")
-elevator2 = Elevator("2")
+        current = int(input("Current floor: "))
+        target = int(input("Target floor: "))
 
-while True:
-    which = input("Which elevator? (1 or 2, or 'q' to quit): ")
-
-    if which == "q":
-        print("Goodbye!")
-        break
-
-    current = int(input("Current floor: "))
-    target = int(input("Target floor: "))
-
-    if which == "1":
-        t = threading.Thread(target=elevator1.move, args=(current, target))
-        t.start()
-    elif which == "2":
-        t = threading.Thread(target=elevator2.move, args=(current, target))
-        t.start()
-    else:
-        print("Please enter 1 or 2.")
+        if which == "1":
+            t = threading.Thread(target=elevator1.move, args=(current, target))
+            t.start()
+        elif which == "2":
+            t = threading.Thread(target=elevator2.move, args=(current, target))
+            t.start()
+        else:
+            print("Please enter 1 or 2.")
