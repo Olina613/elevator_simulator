@@ -1,17 +1,12 @@
 import socket
-from elevator import Elevator
-import threading
+from elevator import Elevator, dispatch
 
 elevator1 = Elevator("1")
 elevator2 = Elevator("2")
+elevators = [elevator1, elevator2]
 
-# 1. 建立一個 socket 物件
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-# 2. 綁定地址:127.0.0.1 是「本機」,12345 是門牌號(port)
 server_socket.bind(("127.0.0.1", 12345))
-
-# 3. 開始監聽,等人來連
 server_socket.listen()
 print("Server is waiting for a connection...")
 
@@ -28,24 +23,25 @@ try:
             command = data.decode()
             print(f"Client {client_address} says: {command}")
 
+            # 解析 hall call:格式 "<樓層> <up/down>",例如 "6 up"
             parts = command.split()
             if len(parts) != 2:
-                print("Invalid command format. Use: <elevator> <floor>")
+                print("Invalid format. Use: <floor> <up/down>")
                 continue
-            which_elevator = parts[0]
-            target_floor = int(parts[1])
 
-            if which_elevator == "1":
-                t = threading.Thread(target=elevator1.move, args=(target_floor,))
-                t.start()
-            elif which_elevator == "2":
-                t = threading.Thread(target=elevator2.move, args=(target_floor,))
-                t.start()
-            else:
-                print("Unknown elevator. Use 1 or 2.")
+            call_floor = int(parts[0])
+            call_direction = parts[1]
+            if call_direction not in ("up", "down"):
+                print("Direction must be 'up' or 'down'.")
+                continue
+
+            # 智慧派車:選最適合的電梯,把樓層加進它的佇列
+            chosen = dispatch(elevators, call_floor, call_direction)
+            print(f"--> Dispatching Elevator {chosen.name} to floor {call_floor}")
+            chosen.add_request(call_floor)
 
         client_connection.close()
 except KeyboardInterrupt:
     print("\nServer shutting down...")
 finally:
-    server_socket.close() 
+    server_socket.close()
