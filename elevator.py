@@ -83,21 +83,16 @@ def estimate_cost(elevator, call_floor, call_direction):  #計算該電梯到目
     if elevator.direction == "down" and call_direction == "down" and elevator.current_floor >= call_floor:
         return distance
 
-    # # 情況 3:不順路
-    # to_finish = abs(elevator.current_floor - elevator.target_floor) # 目前電梯樓層->原目標樓層
-    # to_come = abs(elevator.target_floor - call_floor) # 原目標樓層到乘客所在樓層
-    # return to_finish + to_come
-    
     # 情況 3:不順路 —— 走到方向盡頭,再折返回來
     if not elevator.queue:
         return distance
     if elevator.direction == "up":
         turning_point = max(elevator.queue)      # 往上的盡頭 = queue最大樓層
     else:
-        turning_point = min(elevator.queue)      # 往下的盡頭 =queue最小樓層
+        turning_point = min(elevator.queue)      # 往下的盡頭 = queue最小樓層
 
-    to_end = abs(elevator.current_floor - turning_point)   # 現在 → 盡頭
-    back_to_client = abs(turning_point - call_floor)           # 盡頭 → 折返到乘客所在樓層
+    to_end = abs(elevator.current_floor - turning_point)   # 現在->盡頭
+    back_to_client = abs(turning_point - call_floor)           # 盡頭->折返到乘客所在樓層
     return to_end + back_to_client
 
 def dispatch(elevators, call_floor, call_direction):  #指派最適合的電梯
@@ -117,8 +112,8 @@ def dispatch(elevators, call_floor, call_direction):  #指派最適合的電梯
 if __name__ == "__main__":
     elevator1 = Elevator("1")
     elevator2 = Elevator("2")
-    elevator3 = Elevator("3")                    # ← 多這一台
-    elevators = [elevator1, elevator2, elevator3]  # ← 清單裡加進去
+    elevator3 = Elevator("3")                 
+    elevators = [elevator1, elevator2, elevator3]  
 
     while True:
         call_floor_input = input("Which floor are you on? (or 'q' to quit): ")

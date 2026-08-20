@@ -270,9 +270,7 @@ class TestMultipleElevators(unittest.TestCase):
         elevators[3].current_floor = 6
         elevators[4].current_floor = 8
         elevators[5].current_floor = 10
-
-        # 請求:7 樓 up。各台成本:1號順路=5, 2號=6, 3號=3, 4號=1, 5號=1, 6號=3
-        # 4號(6樓)和5號(8樓)距離都是1,平手選編號小的 → 4號
+        
         chosen_a = dispatch(elevators, 7, "up")
         self.assertEqual(chosen_a.name, "4")
 

@@ -23,7 +23,6 @@ try:
             command = data.decode()
             print(f"Client {client_address} says: {command}")
 
-            # 解析 hall call:格式 "<樓層> <up/down>",例如 "6 up"
             parts = command.split()
             if len(parts) != 2:
                 print("Invalid format. Use: <floor> <up/down>")
